@@ -1,0 +1,94 @@
+@page "/login"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.EntityFrameworkCore
+@using WebVivencias.Models
+@using WebVivencias.Services
+@inject NavigationManager Navigation
+@inject VivenciasContext context
+@inject SessionStorageService SessionStorage
+@rendermode InteractiveServer
+
+<h3 class="text-center my-4">Iniciar Sesión</h3>
+<div class="container d-flex justify-content-center">
+    <div class="card shadow-lg p-4" style="max-width: 400px; width: 100%; border-radius: 10px;">
+        <div class="card-body">
+            <div class="form-group mb-3">
+                <label class="form-label">Usuario o Correo:</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-person-circle"></i></span>
+                    <input type="text" @bind="identificador" class="form-control"
+                        placeholder="Ingrese su usuario o correo" />
+                </div>
+            </div>
+
+            <div class="form-group mb-3">
+                <label class="form-label">Clave:</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                    <input type="password" @bind="clave" class="form-control" placeholder="Ingrese su clave" />
+                </div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(mensajeError))
+            {
+                <div class="text-danger text-center mb-3">@mensajeError</div>
+            }
+
+            @if (showLoading)
+            {
+                <div class="text-center mb-3">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                </div>
+            }
+
+            <button class="btn btn-primary w-100 mt-2" @onclick="LoginWeb">Iniciar Sesión</button>
+
+            <div class="text-center mt-3">
+                <span>¿No tienes una cuenta? </span>
+                <a @onclick="NavigateToRegister" style="cursor: pointer; color: #007bff;">Crear una cuenta</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string identificador = "";
+    private string clave = "";
+    private string mensajeError = "";
+    private bool showLoading = false;
+
+
+
+    private async Task LoginWeb()
+    {
+        showLoading = true;
+        if (string.IsNullOrEmpty(identificador) || string.IsNullOrEmpty(clave))
+        {
+            mensajeError = "Todos los campos son obligatorios";
+            showLoading = false;
+            return;
+        }
+
+        var usuario = await context.Usuarios
+        .FirstOrDefaultAsync(u => (u.Usuario1 == identificador || u.Correo == identificador) && u.Clave == clave);
+
+        if (usuario != null)
+        {
+            await SessionStorage.SetItemAsync("usuario", usuario.Id.ToString());
+            Navigation.NavigateTo("/");
+        }
+        else
+        {
+            mensajeError = "El usuario o clave son incorrectos";
+        }
+
+        showLoading = false;
+    }
+
+    private void NavigateToRegister()
+    {
+        Navigation.NavigateTo("/register");
+    }
+}

@@ -1,0 +1,220 @@
+﻿@page "/"
+@using Microsoft.EntityFrameworkCore
+@using WebVivencias.Models
+@using WebVivencias.Services
+@rendermode InteractiveServer
+@inject SessionStorageService SessionStorage
+@inject VivenciasContext context
+@inject NavigationManager Navigation
+<PageTitle>Vivencias</PageTitle>
+
+
+@code {
+    private Vivencia newVivencia = new Vivencia();
+    private List<Vivencia> vivencias = new();
+    private bool showVivenciaModal = false;
+    private bool showPanicModal = false;
+    private string mensajeError = "";
+    private string claveConfirmacion = "";
+
+    private Usuario usuario = new Usuario();
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var usuarioLocal = await SessionStorage.GetItemAsync("usuario");
+            if (usuarioLocal == null)
+            {
+                Navigation.NavigateTo("/login");
+                return;
+            }
+            usuario = await context.Usuarios.FirstOrDefaultAsync(u => u.Id.ToString() == usuarioLocal) ?? new Usuario();
+
+            await GetVivencias();
+
+
+        }
+    }
+
+    private void ShowVivenciaModal()
+    {
+        newVivencia = new Vivencia();
+        showVivenciaModal = true;
+    }
+    private void HideVivenciaModal() => showVivenciaModal = false;
+
+    private void ShowPanicModal() => showPanicModal = true;
+    private void HidePanicModal() => showPanicModal = false;
+
+    private async Task AddVivencia()
+    {
+        if (string.IsNullOrEmpty(newVivencia.Titulo))
+        {
+            mensajeError = "El titulo es obligatorio";
+            return;
+        }
+
+        if (string.IsNullOrEmpty(newVivencia.Descripcion))
+        {
+            mensajeError = "La descripcion es obligatoria";
+            return;
+        }
+
+
+        newVivencia.UsuarioId = usuario.Id;
+        newVivencia.Usuario = usuario;
+        context.Vivencias.Add(newVivencia);
+        await context.SaveChangesAsync();
+        await GetVivencias();
+        HideVivenciaModal();
+        mensajeError = "";
+    }
+    private async Task GetVivencias()
+    {
+        vivencias = await context.Vivencias.Where(v => v.UsuarioId == usuario.Id).ToListAsync();
+        StateHasChanged();
+    }
+
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file != null)
+        {
+            using var stream = new MemoryStream();
+            await file.OpenReadStream().CopyToAsync(stream);
+            newVivencia.Imagen = stream.ToArray(); // Convierte la imagen a byte[]
+        }
+    }
+
+    private string? ConvertirImagenABase64(byte[]? imagen)
+    {
+        if (imagen == null || imagen.Length == 0)
+            return null;
+
+        return $"data:image/png;base64,{Convert.ToBase64String(imagen)}";
+    }
+
+    private async Task DeleteAllVivencias()
+    {
+        if (usuario.Clave != claveConfirmacion)
+        {
+            mensajeError = "La clave es incorrecta";
+            return;
+        }
+        context.Vivencias.RemoveRange(context.Vivencias.Where(v => v.UsuarioId == usuario.Id));
+        context.SaveChanges();
+        mensajeError = "";
+        await GetVivencias();
+        HidePanicModal();
+    }
+}
+
+<Nabvar />
+<h3 class="text-center mb-4">Registro de Vivencias 🎮</h3>
+
+<div class="text-center mb-3">
+    <button class="btn btn-primary btn-lg" @onclick="ShowVivenciaModal">Agregar Vivencia</button>
+    <button class="btn btn-danger btn-lg ms-3" @onclick="ShowPanicModal">Botón de Pánico 🚨</button>
+</div>
+
+@if (showVivenciaModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0, 0, 0, 0.5);">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Nueva Vivencia</h5>
+                    <button type="button" class="btn-close" aria-label="Close" @onclick="HideVivenciaModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="titulo" class="form-label">Título de la Vivencia</label>
+                        <input type="text" class="form-control" id="titulo" @bind="newVivencia.Titulo"
+                            placeholder="Ingresa el título" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="descripcion" @bind="newVivencia.Descripcion" rows="3"
+                            placeholder="Ingresa una descripción"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="fecha" class="form-label">Fecha</label>
+                        <input type="date" class="form-control" id="fecha" @bind="newVivencia.FechaVivencia" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="imagen" class="form-label">Imagen (opcional)</label>
+                        <InputFile OnChange="OnInputFileChange" class="form-control" />
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(mensajeError))
+                    {
+                        <div class="text-danger text-center mb-3">@mensajeError</div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="HideVivenciaModal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" @onclick="AddVivencia">Agregar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (showPanicModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0, 0, 0, 0.5);">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmación de Borrado</h5>
+                    <button type="button" class="btn-close" aria-label="Close" @onclick="HidePanicModal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Estás seguro de que deseas borrar todas tus vivencias?</p>
+                    <div class="mb-3">
+                        <label for="clave" class="form-label">Ingresa tu clave para confirmar</label>
+                        <input type="password" class="form-control" id="clave" @bind="claveConfirmacion"
+                            placeholder="Clave" />
+                    </div>
+                    @if (!string.IsNullOrEmpty(mensajeError))
+                    {
+                        <div class="text-danger text-center mb-3">@mensajeError</div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="HidePanicModal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" @onclick="DeleteAllVivencias">Borrar Todo</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="container mt-4">
+    <div class="row">
+        @foreach (var vivencia in vivencias)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm border-light">
+                    @if (vivencia.Imagen != null)
+                    {
+                        <img src=" @ConvertirImagenABase64(vivencia.Imagen)" class="card-img-top" alt="Imagen de la vivencia"
+                            style="height: 200px; object-fit: cover;" />
+                    }
+                    else
+                    {
+                        <img src="image.png" class="card-img-top" alt="Imagen de la vivencia"
+                            style="height: 200px; object-fit: cover;" />
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title">@vivencia.Titulo</h5>
+                        <p class="card-text">@vivencia.Descripcion</p>
+                        <p class="text-muted">Fecha: @vivencia.FechaVivencia.ToShortDateString()</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

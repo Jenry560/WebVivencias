@@ -1,0 +1,45 @@
+{
+  "Files": [
+    {
+      "Id": "D:\\Deskop\\Itla\\WebVivencias\\webVivencias\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\WebVivencias.bundle.scp.css",
+      "PackagePath": "staticwebassets\\WebVivencias.bundle.scp.css"
+    },
+    {
+      "Id": "D:\\Deskop\\Itla\\WebVivencias\\webVivencias\\wwwroot\\app.css",
+      "PackagePath": "staticwebassets\\app.css"
+    },
+    {
+      "Id": "D:\\Deskop\\Itla\\WebVivencias\\webVivencias\\wwwroot\\bootstrap\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css"
+    },
+    {
+      "Id": "D:\\Deskop\\Itla\\WebVivencias\\webVivencias\\wwwroot\\bootstrap\\bootstrap.min.css.map",
+      "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css.map"
+    },
+    {
+      "Id": "D:\\Deskop\\Itla\\WebVivencias\\webVivencias\\wwwroot\\favicon.png",
+      "PackagePath": "staticwebassets\\favicon.png"
+    },
+    {
+      "Id": "D:\\Deskop\\Itla\\WebVivencias\\webVivencias\\wwwroot\\image.png",
+      "PackagePath": "staticwebassets\\image.png"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.WebVivencias.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.WebVivencias.props",
+      "PackagePath": "build\\WebVivencias.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.WebVivencias.props",
+      "PackagePath": "buildMultiTargeting\\WebVivencias.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.WebVivencias.props",
+      "PackagePath": "buildTransitive\\WebVivencias.props"
+    }
+  ],
+  "ElementsToRemove": []
+}
