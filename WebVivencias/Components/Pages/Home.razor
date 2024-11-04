@@ -45,7 +45,11 @@
     }
     private void HideVivenciaModal() => showVivenciaModal = false;
 
-    private void ShowPanicModal() => showPanicModal = true;
+    private void ShowPanicModal()
+    {
+        claveConfirmacion = "";
+        showPanicModal = true;
+    }
     private void HidePanicModal() => showPanicModal = false;
 
     private async Task AddVivencia()
