@@ -1,4 +1,10 @@
-﻿<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+﻿@using WebVivencias.Services
+@rendermode InteractiveServer
+@inject SessionStorageService SessionStorage
+@inject NavigationManager Navigation
+
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
     <a class="navbar-brand" href="#">Navbar</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -10,6 +16,15 @@
                 <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Acerca de
             </NavLink>
         </ul>
+
+        <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="#" @onclick="Logout">
+                    <span class="bi bi-box-arrow-right" aria-hidden="true"></span> Cerrar sesión
+                </a>
+            </li>
+        </ul>
+
     </div>
 </nav>
 
@@ -20,3 +35,10 @@
         /* Ajusta este valor según la altura de tu navbar */
     }
 </style>
+@code {
+    private async Task Logout()
+    {
+        await SessionStorage.RemoveItemAsync("usuario");
+        Navigation.NavigateTo("/login");
+    }
+}

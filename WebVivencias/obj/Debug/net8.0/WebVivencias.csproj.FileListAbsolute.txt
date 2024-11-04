@@ -138,3 +138,4 @@ D:\Deskop\Itla\WebVivencias\webVivencias\obj\Debug\net8.0\refint\WebVivencias.dl
 D:\Deskop\Itla\WebVivencias\webVivencias\obj\Debug\net8.0\WebVivencias.pdb
 D:\Deskop\Itla\WebVivencias\webVivencias\obj\Debug\net8.0\WebVivencias.genruntimeconfig.cache
 D:\Deskop\Itla\WebVivencias\webVivencias\obj\Debug\net8.0\ref\WebVivencias.dll
+D:\Deskop\Itla\WebVivencias\webVivencias\obj\Debug\net8.0\WebVivencias.sourcelink.json

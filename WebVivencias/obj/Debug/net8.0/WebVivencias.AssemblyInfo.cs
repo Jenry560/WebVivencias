@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WebVivencias")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d1d4ab223fab8971925eb30f0a6c4638f357d5db")]
 [assembly: System.Reflection.AssemblyProductAttribute("WebVivencias")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WebVivencias")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
